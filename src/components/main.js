@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useLayoutEffect, useState, useRef } from "react";
 import { FormikForm } from "./formikForm";
 import Texty from "rc-texty";
 import "rc-texty/assets/index.css";
@@ -17,6 +17,8 @@ import {
 } from "antd";
 const MainApp = () => {
   const toggleForm = useRef(null);
+  const [buttonText, setButtonText] = useState(true);
+
   return (
     <>
       <header>
@@ -40,9 +42,10 @@ const MainApp = () => {
             shape="round"
             onClick={() => {
               toggleForm.current.flipForm();
+              setButtonText(!buttonText);
             }}
           >
-            Add New Task
+            {buttonText ? <span>Add New Task</span> : <span>Close Form</span>}
           </Button>
         </div>
         <div className="formik">
