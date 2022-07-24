@@ -1,10 +1,31 @@
 .App {
   text-align: center;
+  width: 50%;
+  margin: 10% auto;
+  border: 4px ridge red;
+  padding: 50px;
 }
 
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+}
+
+.inputValue {
+  width: 300px;
+  height: 30px;
+  margin-bottom: 10px;
+  padding: 4px;
+}
+
+header {
+  color: black;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.addButton {
+  color: goldenrod;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -32,6 +53,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
