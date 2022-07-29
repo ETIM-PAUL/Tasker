@@ -1,6 +1,7 @@
-import React, { useLayoutEffect, useState, useRef } from "react";
-import { FormikForm } from "./formikForm";
+import React, { useContext, useState, useRef, useMemo, useEffect } from "react";
+import { FormikForm } from "./addTask.js";
 import Texty from "rc-texty";
+import { TaskProvider } from "../context/context";
 import "rc-texty/assets/index.css";
 import {
   Button,
@@ -15,9 +16,14 @@ import {
   Row,
   Col,
 } from "antd";
+import TaskComponent from "./taskComponent";
 const MainApp = () => {
   const toggleForm = useRef(null);
   const [buttonText, setButtonText] = useState(true);
+  // const {} = useContext
+  // useEffect(() => {
+  //   console.log(tasks);
+  // }, [tasks]);
 
   return (
     <>
@@ -30,11 +36,6 @@ const MainApp = () => {
         </div>
       </header>
       <section>
-        {/* <div className="texty-demo add-task-form" style={{ marginTop: 64 }}>
-          <h1>
-            <Texty ref={tween}>Add Task</Texty>
-          </h1>
-        </div> */}
         <div className="toggleForm">
           <Button
             size="large"
@@ -48,11 +49,16 @@ const MainApp = () => {
             {buttonText ? <span>Add New Task</span> : <span>Close Form</span>}
           </Button>
         </div>
-        <div className="formik">
-          <div>
-            <FormikForm ref={toggleForm} />
+        <TaskProvider>
+          <div className="formik">
+            <div>
+              <FormikForm ref={toggleForm} />
+            </div>
           </div>
-        </div>
+          <section className="task">
+            <TaskComponent />
+          </section>
+        </TaskProvider>
       </section>
     </>
   );

@@ -60,7 +60,7 @@ header {
 }
 
 .toggleForm {
-  width: 200px;
+  width: 100px;
   margin: auto;
   display: block;
 }
@@ -217,7 +217,13 @@ button[type="submit"] {
   justify-content: center;
 }
 
-button {
+
+.add-task-button {
+  margin: 2rem auto !important;
+  justify-content: center !important;
+}
+
+/* button {
   display: flex;
   justify-content: center;
   padding: 0.5rem 1.25rem;
@@ -229,14 +235,40 @@ button {
   text-decoration: none;
   font-weight: bold;
   -webkit-appearance: none;
-  -moz-appearance: none;
+  -moz-appearance: none !;
   appearance: none;
   display: inline-block;
   line-height: initial;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
-  width: 100%
+  width: 100%;
+  transition: none;
+
+} */
+
+.add-task-button {
+  display: flex !important;
+  justify-content: center !important;
+  padding: 0.5rem 1.25rem !important;
+  font-size: 1rem !important;
+  border-radius: 10px !important;
+  background-color: black !important;
+  border: 2px solid black !important;
+  color: goldenrod !important;
+  text-decoration: none !important;
+  font-weight: bold !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  display: inline-block !important;
+  line-height: initial !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  width: 100% !important;
+  transition: none !important;
+  height: 50px !important;
 }
 
 @media (hover: hover) {
@@ -244,20 +276,86 @@ button {
   input[type="submit"]:hover,
   input[type="reset"]:hover,
   input[type="button"]:hover,
-  button:hover {
-    cursor: pointer;
-    background-color: goldenrod;
-    color: black;
-    border: 2px solid goldenrod;
+  button:hover,
+  .add-task-button:hover {
+    cursor: pointer !important;
+    background-color: goldenrod !important;
+    color: black !important;
+    border: 2px solid goldenrod !important;
 
   }
 
-  .addButton {
-    margin: 15px auto;
-  }
-
-  button:hover .addButton {
+  .add-task-button:hover .addButton {
     color: black;
 
   }
+}
+
+.date-flex {
+  display: flex;
+}
+
+.date-label {
+  width: 50%;
+}
+
+.date-label-first {
+  width: 50%;
+}
+
+.date-inline-flex {
+  display: flex;
+  gap: 5px;
+}
+
+.date-input {
+  width: 100%;
+}
+
+.error-date {
+  width: 100% !important;
+}
+
+/* Task Div Styling */
+
+
+.task {
+  /* width: 00px; */
+  /* margin: auto; */
+  margin: 0px 5px;
+  padding: 0px 10px;
+}
+
+.row-dragging {
+  background: #fafafa;
+  border: 1px solid #ccc;
+}
+
+.row-dragging td {
+  padding: 16px;
+}
+
+.row-dragging .drag-visible {
+  visibility: visible;
+}
+
+.delete-icon {
+  color: red !important;
+}
+
+.edit-icon {
+  color: goldenrod !important;
+}
+
+.edit-icon,
+.delete-icon {
+  font-size: 18px !important;
+  cursor: pointer;
+}
+
+.deleteText {
+  display: none;
+  top: 40px;
+  position: absolute;
+  font-size: 10px;
 }
