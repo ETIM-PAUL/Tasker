@@ -18,15 +18,9 @@ function taskReducer(state, { type, payload }) {
     }
     case "editTask": {
       const taskIndex = state.tasks.findIndex(
-        (task) => (task.key = payload.key)
+        (task) => task.key === state.taskToBeEdited.key
       );
-
-      // console.log(payload);
-      // console.log(state.taskToBeEdited);
-      // console.log(state.tasks[payload.index]);
-
       state.tasks[taskIndex] = {
-        ...state.tasks[taskIndex],
         remainder: payload.remainder,
         taskDeadline: payload.taskDeadline,
         taskDesc: payload.taskDesc,
@@ -34,6 +28,8 @@ function taskReducer(state, { type, payload }) {
         taskStatus: payload.taskStatus,
         taskType: payload.taskType,
         taskTitle: payload.taskTitle,
+        index: payload.index,
+        key: payload.key,
       };
 
       return {
@@ -61,7 +57,7 @@ function taskReducer(state, { type, payload }) {
     }
     case "resetTaskToBeEdited": {
       return {
-        taskToBeEdited: {},
+        taskToBeEdited: payload,
         tasks: [...state.tasks],
       };
     }

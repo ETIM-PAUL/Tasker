@@ -126,7 +126,7 @@ const App = () => {
           <EditOutlined
             className="edit-icon"
             onClick={() => {
-              // dispatch({ type: "setTaskToBeEdited", payload: record });
+              dispatch({ type: "setTaskToBeEdited", payload: record });
               toggleModal.current.modalVisible();
               setTask(record);
             }}

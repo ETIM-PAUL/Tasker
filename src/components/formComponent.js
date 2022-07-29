@@ -5,7 +5,7 @@ import { Select, SubmitButton } from "formik-antd";
 import { useTask } from "../context/context";
 import uniqid from "uniqid";
 
-export const MyTextInput = ({ label, ...props }) => {
+const MyTextInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
   return (
     <>
@@ -17,7 +17,7 @@ export const MyTextInput = ({ label, ...props }) => {
     </>
   );
 };
-export const MyDescInput = ({ label, ...props }) => {
+const MyDescInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
   return (
     <>
@@ -30,7 +30,7 @@ export const MyDescInput = ({ label, ...props }) => {
   );
 };
 
-export const MySelect = ({ label, ...props }) => {
+const MySelect = ({ label, ...props }) => {
   const [field, meta] = useField(props);
   return (
     <>
@@ -42,7 +42,7 @@ export const MySelect = ({ label, ...props }) => {
   );
 };
 
-export const MyDateInput = ({ label, ...props }) => {
+const MyDateInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
   return (
     <>
@@ -62,29 +62,24 @@ export const MyDateInput = ({ label, ...props }) => {
 
 export const FormContainer = ({ ...props }) => {
   const { dispatch, state } = useTask();
-  let selectedTask;
-  // console.log(state.tasks[task]);
-  if (props.type === "edit") {
-    const task = state?.tasks.findIndex(
-      (task) => task.key === state.taskToBeEdited.key
-    );
-    if (task >= 0) {
-      selectedTask = state.tasks[task];
-      console.log(selectedTask.taskType);
-    }
-  }
 
+  const {
+    taskTitle,
+    remainder,
+    taskType,
+    taskDesc,
+    taskDeadline,
+    taskStartDate,
+    taskStatus,
+    key,
+    index,
+  } = state.taskToBeEdited;
   const MyCheckbox = ({ children, ...props }) => {
     const [field, meta] = useField({ ...props });
     return (
       <>
         <label className="checkbox">
-          <input
-            {...field}
-            {...props}
-            type="checkbox"
-            // checked={selectedTask ? selectedTask.remainder : false}
-          />
+          <input {...field} {...props} type="checkbox" checked={remainder} />
           {children}
         </label>
         {meta.touched && meta.error ? (
@@ -96,26 +91,36 @@ export const FormContainer = ({ ...props }) => {
   return (
     <div>
       <Formik
+        enableReinitialize
         initialValues={{
-          taskTitle: "",
-          remainder: false, // added for our checkbox
-          taskType: "", // added for our select
-          taskDesc: "", // added for our text-area
-          taskDeadline: "",
-          taskStartDate: "",
-          taskStatus: "pending",
-          index: 0,
+          taskTitle: props.type === "edit" ? taskTitle : "",
+          remainder: props.type === "edit" ? remainder : false, // added for our checkbox
+          taskType: props.type === "edit" ? taskType : "", // added for our select
+          taskDesc: props.type === "edit" ? taskDesc : "", // added for our text-area
+          taskDeadline: props.type === "edit" ? taskDeadline : "",
+          taskStartDate: props.type === "edit" ? taskStartDate : "",
+          taskStatus: props.type === "edit" ? taskStatus : "pending",
+          key: props.type === "edit" ? key : "",
+          index: props.type === "edit" ? index : 0,
         }}
         onSubmit={(values, { setSubmitting }) => {
           // await new Promise((r) => setTimeout(r, 500));
-          const valuesAppended = {
-            ...values,
-            key: uniqid("task-"),
-          };
-          setTimeout(() => {
-            dispatch({ type: "addNewTask", payload: valuesAppended });
-            setSubmitting();
-          }, 1500);
+          if (props.type === "add") {
+            const valuesAppended = {
+              ...values,
+              key: uniqid("task-"),
+            };
+            setTimeout(() => {
+              dispatch({ type: "addNewTask", payload: valuesAppended });
+              setSubmitting();
+            }, 1500);
+          } else {
+            setTimeout(() => {
+              dispatch({ type: "editTask", payload: values });
+              props.setModalVisible(!props.modalVisible);
+              setSubmitting();
+            }, 1500);
+          }
         }}
         validationSchema={Yup.object({
           taskTitle: Yup.string()
