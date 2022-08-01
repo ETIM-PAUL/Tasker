@@ -1,5 +1,5 @@
 import { MenuOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Space, Table, Tag, message } from "antd";
+import { Space, Table, Tag, message, Col } from "antd";
 import { useTask } from "../context/context";
 import { arrayMoveImmutable } from "array-move";
 import React, {
@@ -41,58 +41,58 @@ const App = ({ ...props }) => {
   //updates our data, at each
   useEffect(() => {
     setData(state.tasks);
-    state.tasks.forEach((record) => {
-      if (
+    const record = state.tasks.filter(
+      (record) =>
         record.remainder === true &&
         record.count === "started" &&
         record.taskStatus === "pending"
-      ) {
-        setShowAlert(true);
-        let startTime = new Date(record.taskStartDate).getTime();
-        // console.log("distance:", distance);
-        let x = setInterval(function () {
-          // Get today's date and time
-          let now = new Date().getTime();
+    );
+    if (record) {
+      setShowAlert(true);
+      let startTime = new Date(record.taskStartDate).getTime();
+      // console.log("distance:", distance);
+      let x = setInterval(function () {
+        // Get today's date and time
+        let now = new Date().getTime();
 
-          // Find the distance between now and the count down date
-          let distance = startTime - now;
+        // Find the distance between now and the count down date
+        let distance = startTime - now;
 
-          // Time calculations for days, hours, minutes and seconds
-          let days = Math.floor(distance / (1000 * 60 * 60 * 24));
-          let hours = Math.floor(
-            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-          );
-          let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-          let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        // Time calculations for days, hours, minutes and seconds
+        let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        let hours = Math.floor(
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-          countDownRef.current =
-            days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+        countDownRef.current =
+          days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
 
-          let countDownTimer = days + hours + minutes + seconds;
-          // If the count down is finished, write some text
-          if (countDownTimer === 0) {
-            clearInterval(x, setShowAlert(false));
-            message.success(`time to begin "${record.taskTitle} " `, 5);
-            dispatch({
-              type: "endCountDown",
-              payload: record.key,
-            });
-          }
-          if (countDownTimer === 30) {
-            message.info(`30s left to begin "${record.taskTitle}" `, 5);
-          }
-          if (record.taskStatus === "cancelled") {
-            message.info(`"${record.taskTitle}" has been cancelled `, 5);
-            clearInterval(x);
-          }
-          // console.log(countDown);
-        }, 1000);
-        // if (time < 60) {
-        // }
-        // console.log(tim);
-      }
-      // setShowAlert(true);
-    });
+        let countDownTimer = days + hours + minutes + seconds;
+        // If the count down is finished, write some text
+        if (countDownTimer === 0) {
+          clearInterval(x, setShowAlert(false));
+          message.success(`time to begin "${record.taskTitle} " `, 5);
+          dispatch({
+            type: "endCountDown",
+            payload: record.key,
+          });
+        }
+        if (countDownTimer === 30) {
+          message.info(`30s left to begin "${record.taskTitle}" `, 5);
+        }
+        if (record.taskStatus === "cancelled") {
+          message.info(`"${record.taskTitle}" has been cancelled `, 5);
+          clearInterval(x);
+        }
+        // console.log(countDown);
+      }, 1000);
+      // if (time < 60) {
+      // }
+      // console.log(tim);
+    }
+    // setShowAlert(true);
   }, [state.tasks]);
 
   // deletes task from our state
@@ -276,6 +276,7 @@ const App = ({ ...props }) => {
             row: DraggableBodyRow,
           },
         }}
+        expandIconColumnIndex={1}
         expandable={{
           expandedRowRender: (record) => (
             <p
@@ -286,7 +287,7 @@ const App = ({ ...props }) => {
               {record.taskDesc}
             </p>
           ),
-          rowExpandable: (record) => record.taskDesc,
+          rowExpandable: (record) => record.taskDesc !== "",
         }}
         style={{ overflow: "auto" }}
       />

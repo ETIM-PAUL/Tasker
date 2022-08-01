@@ -141,6 +141,7 @@ export const FormContainer = ({ ...props }) => {
           remainder: Yup.boolean(),
           taskDesc: Yup.string()
             .min(15, "Must be at least 15 characters")
+            .max(50, "Must not be more than 50 characters")
             .notRequired(),
         })}
       >
