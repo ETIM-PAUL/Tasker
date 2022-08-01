@@ -20,5 +20,11 @@ export const FormikForm = forwardRef((props, ref) => {
     },
   }));
 
-  return <div>{toggle && <FormContainer type="add" />}</div>;
+  return (
+    <div>
+      {toggle && (
+        <FormContainer type="add" setToggle={setToggle} toggle={toggle} />
+      )}
+    </div>
+  );
 });

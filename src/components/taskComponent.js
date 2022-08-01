@@ -1,8 +1,14 @@
 import { MenuOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Space, Table, Tag } from "antd";
+import { Space, Table, Tag, message } from "antd";
 import { useTask } from "../context/context";
 import { arrayMoveImmutable } from "array-move";
-import React, { useEffect, useState, useRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import {
   SortableContainer,
   SortableElement,
@@ -21,17 +27,72 @@ const DragHandle = SortableHandle(() => (
 
 const SortableItem = SortableElement((props) => <tr {...props} />);
 const SortableBody = SortableContainer((props) => <tbody {...props} />);
-const App = () => {
+const App = ({ ...props }) => {
   const { state, dispatch } = useTask();
   const toggleModal = useRef(null);
+  const countDownRef = useRef(null);
   const [data, setData] = useState([]);
   const [task, setTask] = useState({});
+  const [countDown, setCountDown] = useState();
+  const [showAlert, setShowAlert] = useState(false);
   let formatedDate;
   let color, shade;
 
   //updates our data, at each
   useEffect(() => {
     setData(state.tasks);
+    state.tasks.forEach((record) => {
+      if (
+        record.remainder === true &&
+        record.count === "started" &&
+        record.taskStatus === "pending"
+      ) {
+        setShowAlert(true);
+        let startTime = new Date(record.taskStartDate).getTime();
+        // console.log("distance:", distance);
+        let x = setInterval(function () {
+          // Get today's date and time
+          let now = new Date().getTime();
+
+          // Find the distance between now and the count down date
+          let distance = startTime - now;
+
+          // Time calculations for days, hours, minutes and seconds
+          let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          let hours = Math.floor(
+            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          );
+          let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+          countDownRef.current =
+            days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+
+          let countDownTimer = days + hours + minutes + seconds;
+          // If the count down is finished, write some text
+          if (countDownTimer === 0) {
+            clearInterval(x, setShowAlert(false));
+            message.success(`time to begin "${record.taskTitle} " `, 5);
+            dispatch({
+              type: "endCountDown",
+              payload: record.key,
+            });
+          }
+          if (countDownTimer === 30) {
+            message.info(`30s left to begin "${record.taskTitle}" `, 5);
+          }
+          if (record.taskStatus === "cancelled") {
+            message.info(`"${record.taskTitle}" has been cancelled `, 5);
+            clearInterval(x);
+          }
+          // console.log(countDown);
+        }, 1000);
+        // if (time < 60) {
+        // }
+        // console.log(tim);
+      }
+      // setShowAlert(true);
+    });
   }, [state.tasks]);
 
   // deletes task from our state
@@ -58,7 +119,43 @@ const App = () => {
       title: "Start Time",
       key: "taskStartDate",
       render: (record) => (
-        <span>{new Date(record.taskStartDate).toUTCString()}</span>
+        // (function () {
+
+        //   } else {
+        //     if (
+        //       new Date(record.taskStartDate).getMinutes() ===
+        //       new Date().getMinutes()
+        //     ) {
+        //       dispatch({ type: "beginTask", payload: record });
+        //       message.success(`Time to start "${record.taskTitle}" `, 5);
+        //       setCountDown(0);
+        //       console.log("done");
+        //       setShowAlert(true);
+        //     }
+        //   }
+        // })(),
+        <>
+          <span>{new Date(record.taskStartDate).toString()}</span>
+          <p>
+            {/* {showAlert && record.remainder === true && (
+              <Tag>task begins in {record.remainder}</Tag>
+            )} */}
+            {record.count === "finished" && record.taskStatus === "pending" && (
+              <p style={{ fontSize: "8px", color: "red" }}>
+                You should have started this task, please kindly update your
+                task status
+              </p>
+            )}
+            {new Date(record.taskStartDate) < Date.now() &&
+              record.taskStatus === "pending" &&
+              record.remainder === false && (
+                <p style={{ fontSize: "8px", color: "red" }}>
+                  You should have started this task, please kindly update your
+                  task status
+                </p>
+              )}
+          </p>
+        </>
       ),
     },
     {
@@ -69,7 +166,7 @@ const App = () => {
           if (record.taskDeadline === "") {
             formatedDate = "no deadline";
           } else {
-            formatedDate = new Date(record.taskDeadline).toUTCString();
+            formatedDate = new Date(record.taskDeadline).toString();
           }
         })(),
         (<span>{formatedDate}</span>)
@@ -122,7 +219,7 @@ const App = () => {
       title: "Action",
       key: "action",
       render: (record) => (
-        <Space size="middle" style={{ display: "grid" }}>
+        <Space size="middle" style={{ display: "block" }}>
           <EditOutlined
             className="edit-icon"
             onClick={() => {

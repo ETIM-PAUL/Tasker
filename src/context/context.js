@@ -5,18 +5,33 @@ const TaskerContext = createContext();
 function taskReducer(state, { type, payload }) {
   switch (type) {
     case "addNewTask": {
+      let count;
+      if (payload.remainder === true) {
+        count = "started";
+      }
+      if (payload.remainder === false) {
+        count = null;
+      }
       const lastElement = state.tasks[state.tasks.length - 1];
       if (lastElement !== undefined) {
         payload.index = lastElement.index + 1;
       } else {
         payload.index = 0;
       }
+
       return {
-        tasks: [...state.tasks, payload],
+        tasks: [...state.tasks, { ...payload, count }],
         taskToBeEdited: {},
       };
     }
     case "editTask": {
+      let count;
+      if (payload.remainder === true) {
+        count = "started";
+      }
+      if (payload.remainder === false) {
+        count = null;
+      }
       const taskIndex = state.tasks.findIndex(
         (task) => task.key === state.taskToBeEdited.key
       );
@@ -30,6 +45,7 @@ function taskReducer(state, { type, payload }) {
         taskTitle: payload.taskTitle,
         index: payload.index,
         key: payload.key,
+        count: count,
       };
 
       return {
@@ -61,6 +77,16 @@ function taskReducer(state, { type, payload }) {
         tasks: [...state.tasks],
       };
     }
+    case "endCountDown":
+      // console.log("all");
+      {
+        const taskIndex = state.tasks.findIndex((task) => task.key === payload);
+        state.tasks[taskIndex].count = "finished";
+      }
+      return {
+        taskToBeEdited: {},
+        tasks: [...state.tasks],
+      };
     default: {
       throw new Error(`Unhandled action type: ${type}`);
     }

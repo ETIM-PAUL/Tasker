@@ -59,6 +59,20 @@ const MyDateInput = ({ label, ...props }) => {
     </>
   );
 };
+const MyCheckbox = ({ children, ...props }) => {
+  const [field, meta] = useField({ ...props });
+  return (
+    <>
+      <label className="checkbox">
+        <input {...field} {...props} />
+        {children}
+      </label>
+      {meta.touched && meta.error ? (
+        <div className="error">{meta.error}</div>
+      ) : null}
+    </>
+  );
+};
 
 export const FormContainer = ({ ...props }) => {
   const { dispatch, state } = useTask();
@@ -74,20 +88,6 @@ export const FormContainer = ({ ...props }) => {
     key,
     index,
   } = state.taskToBeEdited;
-  const MyCheckbox = ({ children, ...props }) => {
-    const [field, meta] = useField({ ...props });
-    return (
-      <>
-        <label className="checkbox">
-          <input {...field} {...props} type="checkbox" checked={remainder} />
-          {children}
-        </label>
-        {meta.touched && meta.error ? (
-          <div className="error">{meta.error}</div>
-        ) : null}
-      </>
-    );
-  };
   return (
     <div>
       <Formik
@@ -103,7 +103,7 @@ export const FormContainer = ({ ...props }) => {
           key: props.type === "edit" ? key : "",
           index: props.type === "edit" ? index : 0,
         }}
-        onSubmit={(values, { setSubmitting }) => {
+        onSubmit={(values, { setSubmitting, resetForm }) => {
           // await new Promise((r) => setTimeout(r, 500));
           if (props.type === "add") {
             const valuesAppended = {
@@ -113,6 +113,7 @@ export const FormContainer = ({ ...props }) => {
             setTimeout(() => {
               dispatch({ type: "addNewTask", payload: valuesAppended });
               setSubmitting();
+              resetForm();
             }, 1500);
           } else {
             setTimeout(() => {
@@ -185,10 +186,7 @@ export const FormContainer = ({ ...props }) => {
           </div>
           <div className="date-inline-flex">
             <div className="date-input">
-              <MyDateInput
-                name="taskStartDate"
-                // onChange={(value) => value._d}
-              />
+              <MyDateInput name="taskStartDate" />
             </div>
             <div className="date-input">
               <MyDateInput
@@ -198,8 +196,8 @@ export const FormContainer = ({ ...props }) => {
             </div>
           </div>
 
-          <MyCheckbox name="remainder">
-            Remind me, few minutes before both starting and deadline time
+          <MyCheckbox name="remainder" type="checkbox">
+            Add a count-down timer for both starting and deadline time
           </MyCheckbox>
           <SubmitButton type="submit" className="add-task-button">
             {props.type === "edit" ? (

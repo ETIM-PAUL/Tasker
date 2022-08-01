@@ -1,29 +1,14 @@
-import React, { useContext, useState, useRef, useMemo, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { FormikForm } from "./addTask.js";
 import Texty from "rc-texty";
-import { TaskProvider } from "../context/context";
+import { TaskProvider, useTask } from "../context/context";
 import "rc-texty/assets/index.css";
-import {
-  Button,
-  Cascader,
-  DatePicker,
-  Input,
-  InputNumber,
-  Radio,
-  Select,
-  Switch,
-  TreeSelect,
-  Row,
-  Col,
-} from "antd";
+import { Button, Alert } from "antd";
 import TaskComponent from "./taskComponent";
 const MainApp = () => {
   const toggleForm = useRef(null);
   const [buttonText, setButtonText] = useState(true);
-  // const {} = useContext
-  // useEffect(() => {
-  //   console.log(tasks);
-  // }, [tasks]);
+  const [showInfo, setShowInfo] = useState(false);
 
   return (
     <>
@@ -35,6 +20,11 @@ const MainApp = () => {
           <div>kskks</div>
         </div>
       </header>
+      {showInfo && (
+        <Alert message="Info Text" type="info" closeText="Close Now"></Alert>
+      )}
+
+      <br />
       <section>
         <div className="toggleForm">
           <Button
@@ -56,7 +46,7 @@ const MainApp = () => {
             </div>
           </div>
           <section className="task">
-            <TaskComponent />
+            <TaskComponent showInfo={showInfo} setShowInfo={setShowInfo} />
           </section>
         </TaskProvider>
       </section>
