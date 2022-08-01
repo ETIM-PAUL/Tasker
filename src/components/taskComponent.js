@@ -41,12 +41,13 @@ const App = ({ ...props }) => {
   //updates our data, at each
   useEffect(() => {
     setData(state.tasks);
-    const record = state.tasks.filter(
+    const record = state.tasks.find(
       (record) =>
         record.remainder === true &&
         record.count === "started" &&
         record.taskStatus === "pending"
     );
+    // console.log(record);
     if (record) {
       setShowAlert(true);
       let startTime = new Date(record.taskStartDate).getTime();

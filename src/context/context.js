@@ -39,7 +39,7 @@ function taskReducer(state, { type, payload }) {
         remainder: payload.remainder,
         taskDeadline: payload.taskDeadline,
         taskDesc: payload.taskDesc,
-        taskStartDate: payload.taskStartDate,
+        taskStartDate: payload?.taskStartDate,
         taskStatus: payload.taskStatus,
         taskType: payload.taskType,
         taskTitle: payload.taskTitle,

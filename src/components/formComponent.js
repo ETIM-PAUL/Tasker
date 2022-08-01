@@ -98,7 +98,7 @@ export const FormContainer = ({ ...props }) => {
           taskType: props.type === "edit" ? taskType : "", // added for our select
           taskDesc: props.type === "edit" ? taskDesc : "", // added for our text-area
           taskDeadline: props.type === "edit" ? taskDeadline : "",
-          taskStartDate: props.type === "edit" ? taskStartDate : "",
+          taskStartDate: props.type === "edit" ? taskStartDate : new Date(),
           taskStatus: props.type === "edit" ? taskStatus : "pending",
           key: props.type === "edit" ? key : "",
           index: props.type === "edit" ? index : 0,
@@ -128,8 +128,18 @@ export const FormContainer = ({ ...props }) => {
             .max(35, "Must be not exceed 45 characters ")
             .min(10, "Must not be less than 10 characters")
             .required("Required"),
-          taskDeadline: Yup.date().min(Date()),
-          taskStartDate: Yup.date().min(Date()).required("Required"),
+          taskStartDate: Object.values(state.taskToBeEdited).includes("started")
+            ? Yup.date().min(new Date()).required("Required")
+            : Yup.date(),
+          taskDeadline: Yup.date().when(
+            "taskStartDate",
+            (taskStartDate, Yup) =>
+              taskStartDate &&
+              Yup.min(
+                taskStartDate,
+                `Deadline has to be after starting time, which if not set, is present time ${new Date()}`
+              )
+          ),
           taskType: Yup.mixed()
             .required("Required")
             .oneOf([
@@ -181,25 +191,34 @@ export const FormContainer = ({ ...props }) => {
             type="text"
             placeholder="Give a brief description of the task."
           />
+
           <div className="date-flex">
-            <label className="date-label-first">Task Starting Date</label>
+            {(Object.values(state.taskToBeEdited).includes("started") &&
+              props.type === "edit") ||
+            props.type === "add" ? (
+              <label className="date-label-first">Task Starting Date</label>
+            ) : null}
             <label className="date-label">Task Deadline(optional)</label>
           </div>
+
           <div className="date-inline-flex">
+            {(Object.values(state.taskToBeEdited).includes("started") &&
+              props.type === "edit") ||
+            props.type === "add" ? (
+              <div className="date-input">
+                <MyDateInput name="taskStartDate" />
+              </div>
+            ) : null}
+
             <div className="date-input">
-              <MyDateInput name="taskStartDate" />
-            </div>
-            <div className="date-input">
-              <MyDateInput
-                name="taskDeadline"
-                // onChange={(value) => value._d}
-              />
+              <MyDateInput name="taskDeadline" />
             </div>
           </div>
 
           <MyCheckbox name="remainder" type="checkbox">
             Add a count-down timer for both starting and deadline time
           </MyCheckbox>
+
           <SubmitButton type="submit" className="add-task-button">
             {props.type === "edit" ? (
               <span className="addButton">Edit Task</span>
