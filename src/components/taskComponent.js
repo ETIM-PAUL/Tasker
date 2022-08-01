@@ -116,36 +116,16 @@ const App = ({ ...props }) => {
       title: "Title",
       dataIndex: "taskTitle",
       key: "taskTitle",
-      filterSearch: true,
-      onFilter: (value, record) => record.taskTitle.includes(value),
     },
     {
       title: "Start Time",
       key: "taskStartDate",
       render: (record) => (
-        // (function () {
-
-        //   } else {
-        //     if (
-        //       new Date(record.taskStartDate).getMinutes() ===
-        //       new Date().getMinutes()
-        //     ) {
-        //       dispatch({ type: "beginTask", payload: record });
-        //       message.success(`Time to start "${record.taskTitle}" `, 5);
-        //       setCountDown(0);
-        //       console.log("done");
-        //       setShowAlert(true);
-        //     }
-        //   }
-        // })(),
         <>
           <span style={{ fontSize: "12px" }}>
             {new Date(record.taskStartDate).toString()}
           </span>
           <p>
-            {/* {showAlert && record.remainder === true && (
-              <Tag>task begins in {record.remainder}</Tag>
-            )} */}
             {record.count === "finished" && record.taskStatus === "pending" && (
               <p style={{ fontSize: "8px", color: "red" }}>
                 You should have started this task, please kindly update your
@@ -174,7 +154,7 @@ const App = ({ ...props }) => {
             formatedDate = new Date(record.taskDeadline).toString();
           }
         })(),
-        (<span>{formatedDate}</span>)
+        (<span style={{ fontSize: "12px" }}>{formatedDate}</span>)
       ),
     },
 
@@ -198,6 +178,8 @@ const App = ({ ...props }) => {
           value: "Cancelled",
         },
       ],
+      onFilter: (value, record) =>
+        record.taskStatus.includes(value.toLowerCase()),
       key: "taskStatus",
       render: (record) => (
         (function () {
@@ -255,7 +237,8 @@ const App = ({ ...props }) => {
           value: "less Important",
         },
       ],
-      filterSearch: true,
+      onFilter: (value, record) =>
+        record.taskType.includes(value.toLowerCase()),
     },
     {
       title: "Action",
@@ -313,7 +296,7 @@ const App = ({ ...props }) => {
       <Table
         dataSource={data}
         columns={columns}
-        rowKey="index"
+        rowKey={(record) => record.index}
         components={{
           body: {
             wrapper: DraggableContainer,

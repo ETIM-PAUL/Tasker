@@ -104,7 +104,6 @@ export const FormContainer = ({ ...props }) => {
           index: props.type === "edit" ? index : 0,
         }}
         onSubmit={(values, { setSubmitting, resetForm }) => {
-          // await new Promise((r) => setTimeout(r, 500));
           if (props.type === "add") {
             const valuesAppended = {
               ...values,
@@ -177,7 +176,7 @@ export const FormContainer = ({ ...props }) => {
             <Select.Option value="less important">Less Important</Select.Option>
           </MySelect>
 
-          {props.type === "edit" && (
+          {props.type === "edit" && new Date(taskStartDate) < Date.now() && (
             <>
               <label>Task Status</label>
               <MySelect label="Task Type" name="taskStatus" className="select">
@@ -196,21 +195,14 @@ export const FormContainer = ({ ...props }) => {
           />
 
           <div className="date-flex">
-            {((Object.values(state.taskToBeEdited).includes("started") ||
-              Object.values(state.taskToBeEdited).includes("not required")) &&
-              props.type === "edit") ||
-            props.type === "add" ? (
+            {new Date(taskStartDate) > Date.now() || props.type === "add" ? (
               <label className="date-label-first">Task Starting Date</label>
             ) : null}
             <label className="date-label">Task Deadline(optional)</label>
           </div>
 
           <div className="date-inline-flex">
-            {(Object.values(state.taskToBeEdited).includes(
-              "started" || "not required"
-            ) &&
-              props.type === "edit") ||
-            props.type === "add" ? (
+            {new Date(taskStartDate) > Date.now() || props.type === "add" ? (
               <div className="date-input">
                 <MyDateInput name="taskStartDate" />
               </div>
