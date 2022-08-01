@@ -10,7 +10,7 @@ function taskReducer(state, { type, payload }) {
         count = "started";
       }
       if (payload.remainder === false) {
-        count = null;
+        count = "not required";
       }
       const lastElement = state.tasks[state.tasks.length - 1];
       if (lastElement !== undefined) {

@@ -127,7 +127,11 @@ export const FormContainer = ({ ...props }) => {
           taskTitle: Yup.string()
             .max(35, "Must be not exceed 45 characters ")
             .min(10, "Must not be less than 10 characters")
-            .required("Required"),
+            .required("Required")
+            .matches(
+              /^[aA-zZ\s]+$/,
+              "Only alphabets are allowed for this field "
+            ),
           taskStartDate: Object.values(state.taskToBeEdited).includes("started")
             ? Yup.date().min(new Date()).required("Required")
             : Yup.date(),
@@ -177,7 +181,6 @@ export const FormContainer = ({ ...props }) => {
             <>
               <label>Task Status</label>
               <MySelect label="Task Type" name="taskStatus" className="select">
-                <Select.Option value="pending">Pending</Select.Option>
                 <Select.Option value="on-going">On-going</Select.Option>
                 <Select.Option value="completed">Completed</Select.Option>
                 <Select.Option value="cancelled">Cancelled</Select.Option>
@@ -193,7 +196,8 @@ export const FormContainer = ({ ...props }) => {
           />
 
           <div className="date-flex">
-            {(Object.values(state.taskToBeEdited).includes("started") &&
+            {((Object.values(state.taskToBeEdited).includes("started") ||
+              Object.values(state.taskToBeEdited).includes("not required")) &&
               props.type === "edit") ||
             props.type === "add" ? (
               <label className="date-label-first">Task Starting Date</label>
@@ -202,7 +206,9 @@ export const FormContainer = ({ ...props }) => {
           </div>
 
           <div className="date-inline-flex">
-            {(Object.values(state.taskToBeEdited).includes("started") &&
+            {(Object.values(state.taskToBeEdited).includes(
+              "started" || "not required"
+            ) &&
               props.type === "edit") ||
             props.type === "add" ? (
               <div className="date-input">

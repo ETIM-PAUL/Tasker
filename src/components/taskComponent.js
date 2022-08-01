@@ -51,6 +51,7 @@ const App = ({ ...props }) => {
     if (record) {
       setShowAlert(true);
       let startTime = new Date(record.taskStartDate).getTime();
+      let endTime = new Date(record.taskDeadline).getTime();
       // console.log("distance:", distance);
       let x = setInterval(function () {
         // Get today's date and time
@@ -115,6 +116,8 @@ const App = ({ ...props }) => {
       title: "Title",
       dataIndex: "taskTitle",
       key: "taskTitle",
+      filterSearch: true,
+      onFilter: (value, record) => record.taskTitle.includes(value),
     },
     {
       title: "Start Time",
@@ -136,7 +139,9 @@ const App = ({ ...props }) => {
         //   }
         // })(),
         <>
-          <span>{new Date(record.taskStartDate).toString()}</span>
+          <span style={{ fontSize: "12px" }}>
+            {new Date(record.taskStartDate).toString()}
+          </span>
           <p>
             {/* {showAlert && record.remainder === true && (
               <Tag>task begins in {record.remainder}</Tag>
@@ -148,8 +153,7 @@ const App = ({ ...props }) => {
               </p>
             )}
             {new Date(record.taskStartDate) < Date.now() &&
-              record.taskStatus === "pending" &&
-              record.remainder === false && (
+              record.taskStatus === "pending" && (
                 <p style={{ fontSize: "8px", color: "red" }}>
                   You should have started this task, please kindly update your
                   task status
@@ -176,6 +180,24 @@ const App = ({ ...props }) => {
 
     {
       title: "Status",
+      filters: [
+        {
+          text: "Pending",
+          value: "Pending",
+        },
+        {
+          text: "On-going",
+          value: "On-going",
+        },
+        {
+          text: "Completed",
+          value: "Completed",
+        },
+        {
+          text: "Cancelled",
+          value: "Cancelled",
+        },
+      ],
       key: "taskStatus",
       render: (record) => (
         (function () {
@@ -215,20 +237,41 @@ const App = ({ ...props }) => {
         })(),
         (<Tag color={color}>{record.taskType.toUpperCase()}</Tag>)
       ),
+      filters: [
+        {
+          text: "Extremely Important",
+          value: "extremely Important",
+        },
+        {
+          text: "Very Important",
+          value: "very Important",
+        },
+        {
+          text: "Important",
+          value: "important",
+        },
+        {
+          text: "Less Important",
+          value: "less Important",
+        },
+      ],
+      filterSearch: true,
     },
     {
       title: "Action",
       key: "action",
       render: (record) => (
         <Space size="middle" style={{ display: "block" }}>
-          <EditOutlined
-            className="edit-icon"
-            onClick={() => {
-              dispatch({ type: "setTaskToBeEdited", payload: record });
-              toggleModal.current.modalVisible();
-              setTask(record);
-            }}
-          />
+          {record.taskStatus !== "cancelled" && (
+            <EditOutlined
+              className="edit-icon"
+              onClick={() => {
+                dispatch({ type: "setTaskToBeEdited", payload: record });
+                toggleModal.current.modalVisible();
+                setTask(record);
+              }}
+            />
+          )}
           <DeleteOutlined
             className="delete-icon"
             onClick={() => deleteTask(record.key)}
