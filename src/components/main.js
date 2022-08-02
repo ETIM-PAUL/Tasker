@@ -12,9 +12,9 @@ const MainApp = () => {
   return (
     <>
       <header>
-        <div class="header-nav">
+        <div className="header-nav">
           <div>
-            <span class="header-text">Tasky</span>
+            <span className="header-text">Tasky</span>
           </div>
           <div>
             <UserOutlined />
