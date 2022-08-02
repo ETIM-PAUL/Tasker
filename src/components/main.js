@@ -1,10 +1,11 @@
 import React, { useState, useRef } from "react";
 import { FormikForm } from "./addTask.js";
 import Texty from "rc-texty";
-import { TaskProvider, useTask } from "../context/context";
+import { TaskProvider } from "../context/context";
 import "rc-texty/assets/index.css";
 import { Button, Alert } from "antd";
-import TaskComponent from "./taskComponent";
+import TaskComponent from "./tasksTableDisplay";
+import { UserOutlined } from "@ant-design/icons";
 const MainApp = () => {
   const toggleForm = useRef(null);
   const [buttonText, setButtonText] = useState(true);
@@ -17,14 +18,15 @@ const MainApp = () => {
           <div>
             <span class="header-text">Tasky</span>
           </div>
-          <div>kskks</div>
+          <div>
+            <UserOutlined />
+          </div>
         </div>
       </header>
       {showInfo && (
         <Alert message="Info Text" type="info" closeText="Close Now"></Alert>
       )}
 
-      <br />
       <section>
         <div className="toggleForm">
           <Button

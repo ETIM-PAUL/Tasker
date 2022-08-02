@@ -1,20 +1,10 @@
 import React, { forwardRef, useState, useImperativeHandle } from "react";
-import { FormContainer } from "./formComponent";
+import { FormContainer } from "./FormComponent/formComponent";
 
 export const FormikForm = forwardRef((props, ref) => {
   const [toggle, setToggle] = useState(false);
-  //  useEffect(() => {
-  //    console.log(tasks)
-  //  }, [tasks])
-
-  // const [type, setType] = useState("time");
-  // const PickerWithType = ({ type, onChange }) => {
-  //   if (type === "time") return <TimePicker onChange={onChange} />;
-  //   if (type === "date") return <DatePicker onChange={onChange} />;
-  //   return <DatePicker picker={type} onChange={onChange} />;
-  // };
-
   useImperativeHandle(ref, () => ({
+    //Function to toggle the visibility of the Add Task Form
     flipForm() {
       setToggle(!toggle);
     },

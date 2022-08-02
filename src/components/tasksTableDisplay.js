@@ -1,14 +1,8 @@
 import { MenuOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Space, Table, Tag, message, Col } from "antd";
+import { Space, Table, Tag, message } from "antd";
 import { useTask } from "../context/context";
 import { arrayMoveImmutable } from "array-move";
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   SortableContainer,
   SortableElement,
@@ -33,7 +27,6 @@ const App = ({ ...props }) => {
   const countDownRef = useRef(null);
   const [data, setData] = useState([]);
   const [task, setTask] = useState({});
-  const [countDown, setCountDown] = useState();
   const [showAlert, setShowAlert] = useState(false);
   let formatedDate;
   let color, shade;
@@ -42,17 +35,12 @@ const App = ({ ...props }) => {
   useEffect(() => {
     setData(state.tasks);
     const record = state.tasks.find(
-      (record) =>
-        record.remainder === true &&
-        record.count === "started" &&
-        record.taskStatus === "pending"
+      (record) => record.count === "started" && record.taskStatus === "pending"
     );
-    // console.log(record);
     if (record) {
       setShowAlert(true);
       let startTime = new Date(record.taskStartDate).getTime();
       let endTime = new Date(record.taskDeadline).getTime();
-      // console.log("distance:", distance);
       let x = setInterval(function () {
         // Get today's date and time
         let now = new Date().getTime();
@@ -88,13 +76,9 @@ const App = ({ ...props }) => {
           message.info(`"${record.taskTitle}" has been cancelled `, 5);
           clearInterval(x);
         }
-        // console.log(countDown);
+        return countDownTimer;
       }, 1000);
-      // if (time < 60) {
-      // }
-      // console.log(tim);
     }
-    // setShowAlert(true);
   }, [state.tasks]);
 
   // deletes task from our state
@@ -125,21 +109,12 @@ const App = ({ ...props }) => {
           <span style={{ fontSize: "12px" }}>
             {new Date(record.taskStartDate).toString()}
           </span>
-          <p>
-            {record.count === "finished" && record.taskStatus === "pending" && (
-              <p style={{ fontSize: "8px", color: "red" }}>
-                You should have started this task, please kindly update your
-                task status
-              </p>
-            )}
-            {new Date(record.taskStartDate) < Date.now() &&
-              record.taskStatus === "pending" && (
-                <p style={{ fontSize: "8px", color: "red" }}>
-                  You should have started this task, please kindly update your
-                  task status
-                </p>
-              )}
-          </p>
+          {record.count === "finished" && record.taskStatus === "pending" && (
+            <p style={{ fontSize: "8px", color: "red" }}>
+              You should have started this task, please kindly update your task
+              status
+            </p>
+          )}
         </>
       ),
     },
@@ -154,7 +129,17 @@ const App = ({ ...props }) => {
             formatedDate = new Date(record.taskDeadline).toString();
           }
         })(),
-        (<span style={{ fontSize: "12px" }}>{formatedDate}</span>)
+        (
+          <>
+            <span style={{ fontSize: "12px" }}>{formatedDate}</span>
+
+            {new Date(record.taskDeadline) < Date.now() && (
+              <p style={{ fontSize: "8px", color: "red" }}>
+                This task has expired
+              </p>
+            )}
+          </>
+        )
       ),
     },
 
@@ -303,7 +288,6 @@ const App = ({ ...props }) => {
             row: DraggableBodyRow,
           },
         }}
-        expandIconColumnIndex={1}
         expandable={{
           expandedRowRender: (record) => (
             <p
