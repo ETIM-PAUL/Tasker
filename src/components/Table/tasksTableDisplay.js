@@ -1,6 +1,6 @@
 import { MenuOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Space, Table, Tag, message } from "antd";
-import { useTask } from "../context/context";
+import { useTask } from "../../context/context";
 import { arrayMoveImmutable } from "array-move";
 import React, { useEffect, useState, useRef } from "react";
 import {
@@ -8,7 +8,7 @@ import {
   SortableElement,
   SortableHandle,
 } from "react-sortable-hoc";
-import EditTask from "./editTask";
+import EditTask from "../editTask";
 
 const DragHandle = SortableHandle(() => (
   <MenuOutlined
@@ -26,6 +26,7 @@ const App = ({ ...props }) => {
   const toggleModal = useRef(null);
   const countDownRef = useRef(null);
   const [data, setData] = useState([]);
+  const [expandedKey, setExpandedKey] = useState(null);
 
   const [showAlert, setShowAlert] = useState(false);
   let formatedDate;
@@ -44,7 +45,6 @@ const App = ({ ...props }) => {
       if (record) {
         setShowAlert(true);
         let startTime = new Date(record.taskStartDate).getTime();
-        let endTime = new Date(record.taskDeadline).getTime();
         let x = setInterval(function () {
           // Get today's date and time
           let now = new Date().getTime();
@@ -284,6 +284,16 @@ const App = ({ ...props }) => {
     return <SortableItem index={index} {...restProps} />;
   };
 
+  const onExpand = (_, key) => {
+    setExpandedKey((prev) => {
+      const newKey = key.key;
+      if (prev !== newKey) {
+        return newKey;
+      }
+      return null;
+    });
+  };
+
   return (
     <>
       <EditTask ref={toggleModal} />
@@ -300,6 +310,7 @@ const App = ({ ...props }) => {
         expandable={{
           expandedRowRender: (record) => (
             <p
+              key={record.key}
               style={{
                 margin: 0,
               }}
@@ -307,6 +318,7 @@ const App = ({ ...props }) => {
               {record.taskDesc}
             </p>
           ),
+          onExpand: onExpand,
           rowExpandable: (record) => record.taskDesc !== "",
         }}
         style={{ overflow: "auto" }}

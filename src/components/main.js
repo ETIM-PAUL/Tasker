@@ -1,10 +1,8 @@
 import React, { useState, useRef } from "react";
 import { FormikForm } from "./addTask.js";
-import Texty from "rc-texty";
 import { TaskProvider } from "../context/context";
-import "rc-texty/assets/index.css";
 import { Button, Alert } from "antd";
-import TaskComponent from "./tasksTableDisplay";
+import TaskComponent from "./Table/tasksTableDisplay";
 import { UserOutlined } from "@ant-design/icons";
 const MainApp = () => {
   const toggleForm = useRef(null);

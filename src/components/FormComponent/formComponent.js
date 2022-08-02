@@ -162,7 +162,7 @@ export const FormContainer = ({ ...props }) => {
                 : false
             }
           >
-            Add a count-down timer for both starting and deadline time
+            Add a remainder for both starting and deadline time
           </MyCheckbox>
 
           {/* Submit Form */}
