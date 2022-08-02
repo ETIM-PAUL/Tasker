@@ -96,7 +96,7 @@ header {
 
 .error {
   font-size: 12px;
-  width: 100px;
+  width: 200px;
   margin-top: 0.25rem;
   color: var(--red-500)
 }
@@ -112,7 +112,7 @@ label {
 }
 
 input {
-  padding: 0.65rem 0.5rem;
+  padding: 0.65rem 0.3rem;
   font-size: 1rem;
   border: 2px solid var(--gray-200);
   background-color: var(--gray-100);

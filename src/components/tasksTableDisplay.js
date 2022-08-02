@@ -26,7 +26,7 @@ const App = ({ ...props }) => {
   const toggleModal = useRef(null);
   const countDownRef = useRef(null);
   const [data, setData] = useState([]);
-  const [task, setTask] = useState({});
+
   const [showAlert, setShowAlert] = useState(false);
   let formatedDate;
   let color, shade;
@@ -34,52 +34,56 @@ const App = ({ ...props }) => {
   //updates our data, at each
   useEffect(() => {
     setData(state.tasks);
-    const record = state.tasks.find(
-      (record) => record.count === "started" && record.taskStatus === "pending"
-    );
-    if (record) {
-      setShowAlert(true);
-      let startTime = new Date(record.taskStartDate).getTime();
-      let endTime = new Date(record.taskDeadline).getTime();
-      let x = setInterval(function () {
-        // Get today's date and time
-        let now = new Date().getTime();
+    if (state.tasks.length > 0) {
+      const record = state.tasks.find(
+        (record) =>
+          record.remainder === true &&
+          record.taskStatus === "pending" &&
+          record.count === "started"
+      );
+      if (record) {
+        setShowAlert(true);
+        let startTime = new Date(record.taskStartDate).getTime();
+        let endTime = new Date(record.taskDeadline).getTime();
+        let x = setInterval(function () {
+          // Get today's date and time
+          let now = new Date().getTime();
 
-        // Find the distance between now and the count down date
-        let distance = startTime - now;
+          // Find the distance between now and the count down date
+          let distance = startTime - now;
 
-        // Time calculations for days, hours, minutes and seconds
-        let days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        let hours = Math.floor(
-          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+          // Time calculations for days, hours, minutes and seconds
+          let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          let hours = Math.floor(
+            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          );
+          let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          let seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        countDownRef.current =
-          days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+          countDownRef.current =
+            days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
 
-        let countDownTimer = days + hours + minutes + seconds;
-        // If the count down is finished, write some text
-        if (countDownTimer === 0) {
-          clearInterval(x, setShowAlert(false));
-          message.success(`time to begin "${record.taskTitle} " `, 5);
-          dispatch({
-            type: "endCountDown",
-            payload: record.key,
-          });
-        }
-        if (countDownTimer === 30) {
-          message.info(`30s left to begin "${record.taskTitle}" `, 5);
-        }
-        if (record.taskStatus === "cancelled") {
-          message.info(`"${record.taskTitle}" has been cancelled `, 5);
-          clearInterval(x);
-        }
-        return countDownTimer;
-      }, 1000);
+          let countDownTimer = days + hours + minutes + seconds;
+          // If the count down is finished, write some text
+          if (countDownTimer === 0) {
+            clearInterval(x, setShowAlert(false));
+            message.success(`time to begin "${record.taskTitle} " `, 5);
+            dispatch({
+              type: "endCountDown",
+              payload: record.key,
+            });
+          }
+          if (countDownTimer === 30) {
+            message.info(`30s left to begin "${record.taskTitle}" `, 5);
+          }
+          if (record.taskStatus === "cancelled") {
+            message.info(`"${record.taskTitle}" has been cancelled `, 5);
+            clearInterval(x);
+          }
+        }, 1000);
+      }
     }
-  }, [state.tasks]);
+  }, [state.tasks, dispatch]);
 
   // deletes task from our state
   const deleteTask = (key) => {
@@ -109,12 +113,14 @@ const App = ({ ...props }) => {
           <span style={{ fontSize: "12px" }}>
             {new Date(record.taskStartDate).toString()}
           </span>
-          {record.count === "finished" && record.taskStatus === "pending" && (
+          {record.taskStatus === "pending" &&
+          record.count === "finished" &&
+          new Date(record.taskDeadline) > Date.now() ? (
             <p style={{ fontSize: "8px", color: "red" }}>
-              You should have started this task, please kindly update your task
+              You should be executing this task, please kindly update your task
               status
             </p>
-          )}
+          ) : null}
         </>
       ),
     },
@@ -133,11 +139,14 @@ const App = ({ ...props }) => {
           <>
             <span style={{ fontSize: "12px" }}>{formatedDate}</span>
 
-            {new Date(record.taskDeadline) < Date.now() && (
-              <p style={{ fontSize: "8px", color: "red" }}>
-                This task has expired
-              </p>
-            )}
+            {new Date(record.taskDeadline) < Date.now() &&
+              record.remainder === true &&
+              (record.taskStatus === "pending" ||
+                record.taskStatus === "on-going") && (
+                <p style={{ fontSize: "8px", color: "red" }}>
+                  This task deadline has passed, please update your task status
+                </p>
+              )}
           </>
         )
       ),
@@ -230,13 +239,13 @@ const App = ({ ...props }) => {
       key: "action",
       render: (record) => (
         <Space size="middle" style={{ display: "block" }}>
-          {record.taskStatus !== "cancelled" && (
+          {record.taskStatus === "cancelled" ||
+          record.taskStatus === "completed" ? null : (
             <EditOutlined
               className="edit-icon"
               onClick={() => {
                 dispatch({ type: "setTaskToBeEdited", payload: record });
                 toggleModal.current.modalVisible();
-                setTask(record);
               }}
             />
           )}
@@ -277,7 +286,7 @@ const App = ({ ...props }) => {
 
   return (
     <>
-      <EditTask ref={toggleModal} task={task} />
+      <EditTask ref={toggleModal} />
       <Table
         dataSource={data}
         columns={columns}

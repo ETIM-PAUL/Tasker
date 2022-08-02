@@ -6,6 +6,7 @@ function taskReducer(state, { type, payload }) {
   switch (type) {
     case "addNewTask": {
       let count;
+
       if (payload.remainder === true) {
         count = "started";
       }
@@ -78,11 +79,9 @@ function taskReducer(state, { type, payload }) {
       };
     }
     case "endCountDown":
-      // console.log("all");
-      {
-        const taskIndex = state.tasks.findIndex((task) => task.key === payload);
-        state.tasks[taskIndex].count = "finished";
-      }
+      const taskIndex = state.tasks.findIndex((task) => task.key === payload);
+      state.tasks[taskIndex].count = "finished";
+
       return {
         taskToBeEdited: {},
         tasks: [...state.tasks],

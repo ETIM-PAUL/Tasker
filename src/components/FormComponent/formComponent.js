@@ -34,7 +34,7 @@ export const FormContainer = ({ ...props }) => {
         initialValues={{
           taskTitle: props.type === "edit" ? taskTitle : "",
           remainder: props.type === "edit" ? remainder : false, // added for our checkbox
-          taskType: props.type === "edit" ? taskType : "", // added for our select
+          taskType: props.type === "edit" ? taskType : "important", // added for our select
           taskDesc: props.type === "edit" ? taskDesc : "", // added for our text-area
           taskDeadline: props.type === "edit" ? taskDeadline : "",
           taskStartDate: props.type === "edit" ? taskStartDate : "",
@@ -93,14 +93,14 @@ export const FormContainer = ({ ...props }) => {
             <Select.Option value="less important">Less Important</Select.Option>
           </MySelect>
 
-          {/* Task Status Selection */}
+          {/* Task Status Selection, which only shows, when you are editing a task*/}
           {props.type === "edit" && new Date(taskStartDate) < Date.now() && (
             <>
               <label>Task Status</label>
               <MySelect label="Task Type" name="taskStatus" className="select">
-                {new Date(taskDeadline) < Date.now() && (
+                {new Date(taskDeadline) > Date.now() || taskDeadline === "" ? (
                   <Select.Option value="on-going">On-going</Select.Option>
-                )}
+                ) : null}
                 <Select.Option value="completed">Completed</Select.Option>
                 <Select.Option value="cancelled">Cancelled</Select.Option>
               </MySelect>

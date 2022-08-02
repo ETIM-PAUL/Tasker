@@ -11,13 +11,12 @@ export const yupValidation = Yup.object().shape({
     "taskStartDate",
     (taskStartDate, Yup) =>
       taskStartDate &&
-      Yup.min(
-        taskStartDate,
-        `Deadline has to be after starting time, which if not set, is present time ${new Date()}`
-      ).when("remainder", (remainder, schema) =>
-        remainder
-          ? schema.required("required when remainder is checked")
-          : schema
+      Yup.min(taskStartDate, `Deadline has to be after ${taskStartDate}`).when(
+        "remainder",
+        (remainder, schema) =>
+          remainder
+            ? schema.required("required when remainder is checked")
+            : schema
       )
   ),
   taskType: Yup.mixed()
